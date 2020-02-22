@@ -5,15 +5,21 @@ import ItemTypes from '../components/ItemTypes'
 function Container (props) {
   const {x, y} = props
 
+  let height = 200
+  let width = 100
+  let top = y
+  let left = x
+
   const [hovered, setHovered] = React.useState(false)
 
   const [borderHovered, setBorderHovered] = React.useState(false)
 
   const [resizing, setResizing] = React.useState(false)
   const [lastClientX, setClientX] = React.useState(null)
+  const [lastClientY, setClientY] = React.useState(null)
   const [moving, setMoving] = React.useState(false)
   
-  const [style, setStyle] = React.useState({opacity: 1, fontSize: 25, fontWeight: 'bold', cursor: 'move', position: props.x? "absolute" : null, left: props.x? `${props.x}px` : null, top: props.y? `${props.y}px` : null, width: '100px'})
+  const [style, setStyle] = React.useState({opacity: 1, fontSize: 25, fontWeight: 'bold', cursor: 'move', position: props.x? "absolute" : null, left: props.x? `${left}px` : null, top: props.y? `${top}px` : null, width: `${width}px`, height: `${height}px`})
 
   const [{ isDragging }, drag] = useDrag({
     item: { type: ItemTypes.CONTAINER, x, y },
@@ -54,12 +60,12 @@ function Container (props) {
 
   let handleMouseObjectMove = e => {
     // we don't want to do anything if we aren't resizing.
-    if (!moving) {
+    if (!moving || borderHovered || resizing) {
       return;
     }
-    let offsetRight = e.clientX - e.target.offsetWidth / 2
-    let offsetTop = e.clientY - e.target.offsetHeight / 2
-        setStyle({...style, left: `${offsetRight}px`, top: `${offsetTop}px`})
+    left = e.clientX - e.target.offsetWidth / 2
+    top = e.clientY - e.target.offsetHeight / 2
+        setStyle({...style, left: `${left}px`, top: `${top}px`})
   };
 
   let handleBorderEnter = () => {
@@ -77,24 +83,42 @@ function Container (props) {
   let handleMousedown = e => {
     setResizing(true)
     setClientX(e.clientX)
+    setClientY(e.clientY)
   };
 
   let handleMousemove = e => {
-    // we don't want to do anything if we aren't resizing.
     if (!resizing) {
       return;
     }
-    
-    // debugger
-    //   this.setState({ newWidth: { width: offsetRight } });
-        setStyle({...style, left: `${e.clientX}px`, top: `${e.clientY}px`})
+
+    if (e.target.dataset.tag === "Bottom Right") {
+        width = width + (e.pageX - lastClientX)
+        height = height + (e.pageY - lastClientY)
+        setStyle({...style, width: `${width}px`, height: `${height}px`})
+    } else if (e.target.dataset.tag === "Top Right") {
+        width = width + (e.pageX - lastClientX)
+        height = height - (e.pageY - lastClientY)
+        top = top + (e.pageY - lastClientY)
+        setStyle({...style, width: `${width}px`, height: `${height}px`, top: `${top}px`})
+    } else if (e.target.dataset.tag === "Top Left") {
+        width = width - (e.pageX - lastClientX)
+        height = height - (e.pageY - lastClientY)
+        left = left + (e.pageX - lastClientX)
+        top = top + (e.pageY - lastClientY)
+        setStyle({...style, width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px`})
+    } else if (e.target.dataset.tag === "Bottom Left") {
+        width = width - (e.pageX - lastClientX)
+        height = height + (e.pageY - lastClientY)
+        left = left + (e.pageX - lastClientX)
+        setStyle({...style, width: `${width}px`, height: `${height}px`, left: `${left}px`})
+    }
   };
 
 let handleMouseup = e => {
     setResizing(false)
+    setClientY(null)
+    setClientX(null)
   };
-
-let cursorStyle = 'grabbing'
 
 let conditionChecker = () => {
     if (hovered || borderHovered) {
@@ -104,14 +128,24 @@ let conditionChecker = () => {
     }
 }
 
+let renderHover = () => {
+    if (hovered) {
+        return (
+            <div className="InternalBorders">
+                <div className="BorderDot" data-tag="Top Left" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', left: '-5px'}}></div>
+                <div className="BorderDot" data-tag="Top Right" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', right: '-5px'}}></div>
+                <div className="BorderDot" data-tag="Bottom Right" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{bottom: '-5px', right: "-5px"}}></div>
+                <div className="BorderDot" data-tag="Bottom Left" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{bottom: '-5px', left: '-5px'}}></div>
+            </div>
+        )
+    }
+}
 
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
-        {hovered? <div className="InternalBorders"><div className="BorderDot" style={resizing? {cursor: 'grabbing'} : null} onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', left: '-5px'}}></div><div className="BorderDot" onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', right: '-5px'}}></div><div className="BorderDot" onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{bottom: '-5px', right: "-5px"}}></div><div className="BorderDot" onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{bottom: '-5px', left: '-5px'}}></div></div> : null}
+        {renderHover()}
     </div>
   )
 }
 
-
-  
 export default Container
