@@ -4,7 +4,7 @@ import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import ElementContainer from './containers/ElementContainer'
 import WebSiteContainer from './containers/WebsiteContainer'
-import MouseBackEnd from 'react-dnd-mouse-backend'
+import ToolConsole from './containers/ToolConsole'
 
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
       <DndProvider backend={Backend}>
         <ElementContainer />
         <WebSiteContainer />
+        {/* <ToolConsole /> */}
       </DndProvider>
     </div>
   );

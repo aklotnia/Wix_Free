@@ -74,3 +74,73 @@
   width: 9px;
   transform: scaleX(-1);
 }
+
+#ToolConsole {
+  position: fixed;
+  top: 40px;
+  right: 40px;
+  height: 600px;
+  width: 150px;
+  background-color: beige;
+}
+
+.ObjTools {
+
+}
+
+.ActiveMenu {
+  height: 100%;
+  width: 100%;
+  background-color: lightblue;
+  overflow: auto;
+}
+
+.ColorMenu {
+  width: 100%;
+  height: 1000px;
+  background-color: peru;
+}
+
+.BackgroundColorMenu {
+  font-size: 14px;
+}
+
+.ObjToolsContainer {
+  position: absolute;
+  display: grid;
+  grid-template-rows: 25% 75%;
+  right: -220px;
+  top: -40px;
+  height: 400px;
+  background-color: beige;
+  width: 200px;
+}
+
+.ToolGrid {
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  width: 90%;
+  height: 80%;
+  margin: auto;
+  background: lightgrey;
+}
+
+.RGBCell {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.RGB {
+  position: absolute;
+  height: 25px;
+  width: 25px;
+  margin: auto;
+  transform: rotate(60deg);
+  transition: 500ms linear;
+}
+
+.RGB:hover {
+  transform: rotate(420deg);
+}

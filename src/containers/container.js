@@ -1,25 +1,37 @@
 import React from 'react'
 import { useDrag } from 'react-dnd'
 import ItemTypes from '../components/ItemTypes'
+import ObjTools from '../containers/ObjTools'
 
 function Container (props) {
   const {x, y} = props
 
-  let height = 200
-  let width = 100
-  let top = y
-  let left = x
+  let height = 200;
+  let width = 100;
+  let top = y;
+  let left = x;
 
   const [hovered, setHovered] = React.useState(false)
 
   const [borderHovered, setBorderHovered] = React.useState(false)
+  const [active, setActive] = React.useState(false)
 
   const [resizing, setResizing] = React.useState(false)
   const [lastClientX, setClientX] = React.useState(null)
   const [lastClientY, setClientY] = React.useState(null)
   const [moving, setMoving] = React.useState(false)
   
-  const [style, setStyle] = React.useState({opacity: 1, fontSize: 25, fontWeight: 'bold', cursor: 'move', position: props.x? "absolute" : null, left: props.x? `${left}px` : null, top: props.y? `${top}px` : null, width: `${width}px`, height: `${height}px`})
+  const [style, setStyle] = React.useState({opacity: 1, fontSize: 25, fontWeight: 'bold', cursor: 'move', position: props.x? "absolute" : null, left: props.x? `${x}px` : null, top: props.y? `${y}px` : null, width: `100px`, height: `200px`})
+
+//   let height = parseInt(style.height.substr(0, style.height.length - 2))
+//   let width = parseInt(style.width.substr(0, style.width.length - 2))
+//   let top 
+//   let left
+
+//   if (x || y) {
+//     top = parseInt(style.top.substr(0, style.top.length - 2))
+//     left = parseInt(style.left.substr(0, style.left.length - 2))
+//   }
 
   const [{ isDragging }, drag] = useDrag({
     item: { type: ItemTypes.CONTAINER, x, y },
@@ -37,10 +49,12 @@ function Container (props) {
   }
 
   let handleMouseLeave = () => {
-    if (props.placed) {
-      let borderStyle = {borderColor: "rgba(0,0,0, 1)"}
-      setStyle({...style, ...borderStyle})
-      setHovered(false)
+    if (!active) {
+        if (props.placed) {
+        let borderStyle = {borderColor: "rgba(0,0,0, 1)"}
+        setStyle({...style, ...borderStyle})
+        setHovered(false)
+        }
     }
   }
 
@@ -59,7 +73,6 @@ function Container (props) {
   }
 
   let handleMouseObjectMove = e => {
-    // we don't want to do anything if we aren't resizing.
     if (!moving || borderHovered || resizing) {
       return;
     }
@@ -75,10 +88,10 @@ function Container (props) {
   }
 
   let handeBorderLeave = () => {
-      if (props.placed) {
-          setBorderHovered(false)
-      }
-  }
+        if (props.placed) {
+            setBorderHovered(false)
+        }
+    }
 
   let handleMousedown = e => {
     setResizing(true)
@@ -128,10 +141,17 @@ let conditionChecker = () => {
     }
 }
 
+let toggleActive = () => {
+    if (props.placed) {
+        setActive(!active)
+    }
+}
+
 let renderHover = () => {
     if (hovered) {
         return (
             <div className="InternalBorders">
+                {active? <ObjTools /> : null}
                 <div className="BorderDot" data-tag="Top Left" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', left: '-5px'}}></div>
                 <div className="BorderDot" data-tag="Top Right" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', right: '-5px'}}></div>
                 <div className="BorderDot" data-tag="Bottom Right" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{bottom: '-5px', right: "-5px"}}></div>
@@ -142,7 +162,7 @@ let renderHover = () => {
 }
 
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
+    <div onDoubleClick={toggleActive} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
         {renderHover()}
     </div>
   )
