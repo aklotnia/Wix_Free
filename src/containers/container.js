@@ -6,10 +6,10 @@ import ObjTools from '../containers/ObjTools'
 function Container (props) {
   const {x, y} = props
 
-  let height = 200;
-  let width = 100;
-  let top = y;
-  let left = x;
+  let [height, setHeight] = React.useState(200)
+  let [width, setWidth] = React.useState(100)
+  let [top, setTop] = React.useState(y);
+  let [left, setLeft] = React.useState(x);
 
   const [hovered, setHovered] = React.useState(false)
 
@@ -21,17 +21,7 @@ function Container (props) {
   const [lastClientY, setClientY] = React.useState(null)
   const [moving, setMoving] = React.useState(false)
   
-  const [style, setStyle] = React.useState({opacity: 1, fontSize: 25, fontWeight: 'bold', cursor: 'move', position: props.x? "absolute" : null, left: props.x? `${x}px` : null, top: props.y? `${y}px` : null, width: `100px`, height: `200px`})
-
-//   let height = parseInt(style.height.substr(0, style.height.length - 2))
-//   let width = parseInt(style.width.substr(0, style.width.length - 2))
-//   let top 
-//   let left
-
-//   if (x || y) {
-//     top = parseInt(style.top.substr(0, style.top.length - 2))
-//     left = parseInt(style.left.substr(0, style.left.length - 2))
-//   }
+  const [style, setStyle] = React.useState({opacity: 1, fontSize: 25, fontWeight: 'bold', cursor: 'move', position: props.x? "absolute" : null, left: props.x? `${left}px` : null, top: props.y? `${top}px` : null, width: `${width}px`, height: `${height}px`})
 
   const [{ isDragging }, drag] = useDrag({
     item: { type: ItemTypes.CONTAINER, x, y },
@@ -99,38 +89,48 @@ function Container (props) {
     setClientY(e.clientY)
   };
 
+ 
+
   let handleMousemove = e => {
     if (!resizing) {
       return;
     }
 
+    let new_width
+    let new_height
+    let new_top
+    let new_left
+
     if (e.target.dataset.tag === "Bottom Right") {
-        width = width + (e.pageX - lastClientX)
-        height = height + (e.pageY - lastClientY)
-        setStyle({...style, width: `${width}px`, height: `${height}px`})
+        new_width = width + (e.pageX - lastClientX)
+        new_height = height + (e.pageY - lastClientY)
+        setStyle({...style, width: `${new_width}px`, height: `${new_height}px`})
     } else if (e.target.dataset.tag === "Top Right") {
-        width = width + (e.pageX - lastClientX)
-        height = height - (e.pageY - lastClientY)
-        top = top + (e.pageY - lastClientY)
-        setStyle({...style, width: `${width}px`, height: `${height}px`, top: `${top}px`})
+        new_width = width + (e.pageX - lastClientX)
+        new_height = height - (e.pageY - lastClientY)
+        new_top = top + (e.pageY - lastClientY)
+        setStyle({...style, width: `${new_width}px`, height: `${new_height}px`, top: `${new_top}px`})
     } else if (e.target.dataset.tag === "Top Left") {
-        width = width - (e.pageX - lastClientX)
-        height = height - (e.pageY - lastClientY)
-        left = left + (e.pageX - lastClientX)
-        top = top + (e.pageY - lastClientY)
-        setStyle({...style, width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px`})
+        new_width = width - (e.pageX - lastClientX)
+        new_height = height - (e.pageY - lastClientY)
+        new_left = left + (e.pageX - lastClientX)
+        new_top = top + (e.pageY - lastClientY)
+        setStyle({...style, width: `${new_width}px`, height: `${new_height}px`, top: `${new_top}px`, left: `${new_left}px`})
     } else if (e.target.dataset.tag === "Bottom Left") {
-        width = width - (e.pageX - lastClientX)
-        height = height + (e.pageY - lastClientY)
-        left = left + (e.pageX - lastClientX)
-        setStyle({...style, width: `${width}px`, height: `${height}px`, left: `${left}px`})
+        new_width = width - (e.pageX - lastClientX)
+        new_height = height + (e.pageY - lastClientY)
+        new_left = left + (e.pageX - lastClientX)
+        setStyle({...style, width: `${new_width}px`, height: `${new_height}px`, left: `${new_left}px`})
     }
   };
 
 let handleMouseup = e => {
+    let finalElement = e.target.parentNode.parentNode
     setResizing(false)
-    setClientY(null)
-    setClientX(null)
+    setHeight(parseInt(finalElement.style.height))
+    setWidth(parseInt(finalElement.style.width))
+    setLeft(parseInt(finalElement.style.left))
+    setTop(parseInt(finalElement.style.top))
   };
 
 let conditionChecker = () => {
@@ -151,7 +151,7 @@ let renderHover = () => {
     if (hovered) {
         return (
             <div className="InternalBorders">
-                {active? <ObjTools /> : null}
+                {/* {active? <ObjTools /> : null} */}
                 <div className="BorderDot" data-tag="Top Left" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', left: '-5px'}}></div>
                 <div className="BorderDot" data-tag="Top Right" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', right: '-5px'}}></div>
                 <div className="BorderDot" data-tag="Bottom Right" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{bottom: '-5px', right: "-5px"}}></div>
@@ -162,7 +162,7 @@ let renderHover = () => {
 }
 
   return (
-    <div onDoubleClick={toggleActive} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
         {renderHover()}
     </div>
   )
