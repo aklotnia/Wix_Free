@@ -6,9 +6,11 @@ import ObjTools from '../containers/ObjTools'
 function Container (props) {
   const {x, y} = props
 
-  let [R, setRed] = React.useState("255")
-  let [G, setGreen] = React.useState("255")
-  let [B, setBlue] = React.useState("255")
+  let [R, setRed] = React.useState(255)
+  let [G, setGreen] = React.useState(255)
+  let [B, setBlue] = React.useState(255)
+  let [A, setAlpha] = React.useState(1)
+
   let [height, setHeight] = React.useState(200)
   let [width, setWidth] = React.useState(100)
   let [top, setTop] = React.useState(y);
@@ -34,7 +36,7 @@ function Container (props) {
   })
 
   let updateColor = () => {
-      setStyle({...style, backgroundColor: `rgb(${R}, ${G}, ${B})`})
+      setStyle({...style, backgroundColor: `rgba(${R}, ${G}, ${B}, ${A})`})
   }
 
   let handleMouseEnter = () => {
@@ -174,7 +176,7 @@ let renderHover = () => {
     <div onDoubleClick={toggleActive} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
         {renderHover()}
     </div>
-    {active? <ObjTools rgb={{r: setRed, g: setGreen, b: setBlue, u: updateColor}}/> : null}
+    {active? <ObjTools R={R} G={G} B={B} A={A} rgb={{r: setRed, g: setGreen, b: setBlue, u: updateColor, a: setAlpha}}/> : null}
     </div>
   )
 }
