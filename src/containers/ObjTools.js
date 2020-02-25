@@ -13,7 +13,7 @@ class ObjTools extends React.Component {
 
     menuRender = () => {
         if (this.state.colorShow) {
-            return <ColorMenu />
+            return <ColorMenu rgb={this.props.rgb} />
         } else {
             
         }

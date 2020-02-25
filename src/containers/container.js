@@ -6,6 +6,9 @@ import ObjTools from '../containers/ObjTools'
 function Container (props) {
   const {x, y} = props
 
+  let [R, setRed] = React.useState("255")
+  let [G, setGreen] = React.useState("255")
+  let [B, setBlue] = React.useState("255")
   let [height, setHeight] = React.useState(200)
   let [width, setWidth] = React.useState(100)
   let [top, setTop] = React.useState(y);
@@ -29,6 +32,10 @@ function Container (props) {
       isDragging: !!monitor.isDragging(),
     }),
   })
+
+  let updateColor = () => {
+      setStyle({...style, backgroundColor: `rgb(${R}, ${G}, ${B})`})
+  }
 
   let handleMouseEnter = () => {
       if (props.placed) {
@@ -68,6 +75,8 @@ function Container (props) {
     }
     left = e.clientX - e.target.offsetWidth / 2
     top = e.clientY - e.target.offsetHeight / 2
+    setTop(top)
+    setLeft(left)
         setStyle({...style, left: `${left}px`, top: `${top}px`})
   };
 
@@ -151,7 +160,6 @@ let renderHover = () => {
     if (hovered) {
         return (
             <div className="InternalBorders">
-                {/* {active? <ObjTools /> : null} */}
                 <div className="BorderDot" data-tag="Top Left" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', left: '-5px'}}></div>
                 <div className="BorderDot" data-tag="Top Right" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{top: '-5px', right: '-5px'}}></div>
                 <div className="BorderDot" data-tag="Bottom Right" onMouseDown={handleMousedown} onMouseUp={handleMouseup} onMouseMove={handleMousemove} onMouseEnter={handleBorderEnter} onMouseLeave={handeBorderLeave} style={{bottom: '-5px', right: "-5px"}}></div>
@@ -162,8 +170,11 @@ let renderHover = () => {
 }
 
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
+    <div className="ContainerContainer">
+    <div onDoubleClick={toggleActive} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
         {renderHover()}
+    </div>
+    {active? <ObjTools rgb={{r: setRed, g: setGreen, b: setBlue, u: updateColor}}/> : null}
     </div>
   )
 }
