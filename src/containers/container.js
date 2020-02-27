@@ -100,7 +100,9 @@ function Container (props) {
     setClientY(e.clientY)
   };
 
- 
+  let handleBackgroundImage = (imageURL) => {
+      setStyle({...style, backgroundImage: `url(${imageURL})`})
+  }
 
   let handleMousemove = e => {
     if (!resizing) {
@@ -176,7 +178,7 @@ let renderHover = () => {
     <div onDoubleClick={toggleActive} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
         {renderHover()}
     </div>
-    {active? <ObjTools R={R} G={G} B={B} A={A} rgb={{r: setRed, g: setGreen, b: setBlue, u: updateColor, a: setAlpha}}/> : null}
+    {active? <ObjTools height={height} width={width} handleBackgroundImage={handleBackgroundImage} R={R} G={G} B={B} A={A} rgb={{r: setRed, g: setGreen, b: setBlue, u: updateColor, a: setAlpha}}/> : null}
     </div>
   )
 }
