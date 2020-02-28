@@ -13,7 +13,7 @@ class ObjTools extends React.Component {
 
     menuRender = () => {
         if (this.state.colorShow) {
-            return <ColorMenu height={this.props.height} width={this.props.width} handleBackgroundImage={this.props.handleBackgroundImage} rgb={this.props.rgb} R={this.props.R} G={this.props.G} B={this.props.B} A={this.props.A} />
+            return <ColorMenu setStyle={this.props.setStyle} style={this.props.style} setBackgroundX={this.props.setBackgroundX} setBackgroundY={this.props.setBackgroundY} height={this.props.height} width={this.props.width} handleBackgroundImage={this.props.handleBackgroundImage} rgb={this.props.rgb} R={this.props.R} G={this.props.G} B={this.props.B} A={this.props.A} />
         } else {
             
         }

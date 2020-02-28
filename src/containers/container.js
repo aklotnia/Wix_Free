@@ -15,6 +15,8 @@ function Container (props) {
   let [width, setWidth] = React.useState(100)
   let [top, setTop] = React.useState(y);
   let [left, setLeft] = React.useState(x);
+  const [backgroundX, setBackgroundX] = React.useState(null)
+  const [backgroundY, setBackgroundY] = React.useState(null)
 
   const [hovered, setHovered] = React.useState(false)
 
@@ -26,7 +28,7 @@ function Container (props) {
   const [lastClientY, setClientY] = React.useState(null)
   const [moving, setMoving] = React.useState(false)
   
-  const [style, setStyle] = React.useState({opacity: 1, fontSize: 25, fontWeight: 'bold', cursor: 'move', position: props.x? "absolute" : null, left: props.x? `${left}px` : null, top: props.y? `${top}px` : null, width: `${width}px`, height: `${height}px`})
+  const [style, setStyle] = React.useState({opacity: 1, fontSize: 25, fontWeight: 'bold', cursor: 'move', position: props.x? "absolute" : null, left: props.x? `${left}px` : null, top: props.y? `${top}px` : null, width: `${width}px`, height: `${height}px`, backgroundPosition: `${backgroundX} ${backgroundY}`})
 
   const [{ isDragging }, drag] = useDrag({
     item: { type: ItemTypes.CONTAINER, x, y },
@@ -178,7 +180,7 @@ let renderHover = () => {
     <div onDoubleClick={toggleActive} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onMouseMove={handleMouseObjectMove} onMouseDown={handleMouseDownMove} onMouseUp={handleMouseUpMove} className="Container" ref={conditionChecker()} style={style}>
         {renderHover()}
     </div>
-    {active? <ObjTools height={height} width={width} handleBackgroundImage={handleBackgroundImage} R={R} G={G} B={B} A={A} rgb={{r: setRed, g: setGreen, b: setBlue, u: updateColor, a: setAlpha}}/> : null}
+    {active? <ObjTools height={height} setStyle={setStyle} style={style} width={width} setBackgroundX={setBackgroundX} setBackgroundY={setBackgroundY} handleBackgroundImage={handleBackgroundImage} R={R} G={G} B={B} A={A} rgb={{r: setRed, g: setGreen, b: setBlue, u: updateColor, a: setAlpha}}/> : null}
     </div>
   )
 }
